@@ -1,0 +1,48 @@
+[user]
+    name = Aryel Mota Góis
+    email = aryel.gois@gmail.com
+
+[credential]
+    helper = cache --timeout=3600
+
+[core]
+    autocrlf = input
+    excludesfile = ~/.gitignore
+
+[push]
+    default = simple
+
+[color "status"]
+    added = green
+    changed = yellow
+    untracked = red
+
+[diff]
+    renames = true
+
+[alias]
+    # shortcuts
+    br         = branch
+    co         = checkout
+    ci         = commit
+    ls         = ls-files
+    st         = status -sb
+    lg         = log --all --date-order --decorate --graph --oneline
+
+    # used to bootstrap the initial commit, as I usually work on develop and release on master
+    big-bang   = !git add . && git ci -m \"Initial commit\" && git co -b develop
+
+    # hide from git files changed
+    hide       = update-index --assume-unchanged
+    unhide     = update-index --no-assume-unchanged
+    hidden     = !git ls -v | grep '^[a-z]' | cut -d ' ' -f 2-
+
+    # list files ignored
+    ignored    = !git status -s --ignored | grep '^!!' | cut -d ' ' -f 2-
+
+    # utils
+    recommit   = !GIT_COMMITTER_DATE="$(git log --pretty=format:'%ad' -1)" \
+                  GIT_COMMITTER_NAME="$(git log --pretty=format:'%an' -1)" \
+                  GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git commit --amend
+    reindex    = !rm .git/index && git reset
+    unstage    = reset HEAD --

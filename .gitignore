@@ -1,0 +1,11 @@
+# Temporary files
+*~
+*.swp
+*.swo
+
+# OS generated
+.DS_Store*
+Thumbs.db
+
+# I use for intentionally untracked files
+.nogit/
