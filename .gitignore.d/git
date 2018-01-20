@@ -6,6 +6,6 @@
 !/.config/mr/config.d
 !/.config/mr/config.d/git.vcsh
 !/.gitconfig
-!/.gitignore
+!/.gitexcludes
 !/.gitignore.d
 !/.gitignore.d/git
