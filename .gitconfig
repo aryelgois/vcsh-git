@@ -38,12 +38,12 @@
     staged     = diff --staged
 
     # used to bootstrap the initial commit, as I usually work on develop and release on master
-    big-bang   = !git add . && git ci -m \"Initial commit\" && git co -b develop
+    big-bang   = !git add . && git commit -m \"Initial commit\" && git checkout -b develop
 
     # hide from git files changed
     hide       = update-index --assume-unchanged
     unhide     = update-index --no-assume-unchanged
-    hidden     = !git ls -v | grep '^[a-z]' | cut -d ' ' -f 2-
+    hidden     = !git ls-files -v | grep '^[a-z]' | cut -d ' ' -f 2-
 
     # list files ignored
     ignored    = !git status -s --ignored | grep '^!!' | cut -d ' ' -f 2-
@@ -51,7 +51,7 @@
     # utils
     recommit   = !GIT_COMMITTER_DATE="$(git log --pretty=format:'%ad' -1)" \
                   GIT_COMMITTER_NAME="$(git log --pretty=format:'%an' -1)" \
-                  GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git amend
+                  GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git commit --amend
     reindex    = !rm .git/index && git reset
     unstage    = reset HEAD --
     abandon    = !b="$(git symbolic-ref --short HEAD)" && [ "$b" != "master" ] && git checkout master && git branch -D "$b"
