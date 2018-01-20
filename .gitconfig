@@ -53,3 +53,6 @@
                   GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git amend
     reindex    = !rm .git/index && git reset
     unstage    = reset HEAD --
+    abandon    = !b="$(git symbolic-ref --short HEAD)" && [ "$b" != "master" ] && git checkout master && git branch -D "$b"
+    score      = diff --shortstat
+    score-vs-master = !git diff --shortstat $(git merge-base HEAD origin/master) -- .
