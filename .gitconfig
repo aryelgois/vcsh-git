@@ -25,10 +25,16 @@
     # shortcuts
     br         = branch
     co         = checkout
+    cb         = checkout -b
     ci         = commit
+    cp         = cherry-pick
     ls         = ls-files
     st         = status -sb
     lg         = log --all --date-order --decorate --graph --oneline
+
+    # alias
+    amend      = commit --amend
+    staged     = diff --staged
 
     # used to bootstrap the initial commit, as I usually work on develop and release on master
     big-bang   = !git add . && git ci -m \"Initial commit\" && git co -b develop
@@ -44,6 +50,6 @@
     # utils
     recommit   = !GIT_COMMITTER_DATE="$(git log --pretty=format:'%ad' -1)" \
                   GIT_COMMITTER_NAME="$(git log --pretty=format:'%an' -1)" \
-                  GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git commit --amend
+                  GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git amend
     reindex    = !rm .git/index && git reset
     unstage    = reset HEAD --
