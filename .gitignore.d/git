@@ -5,7 +5,7 @@
 !/.config/mr/available.d/git.vcsh
 !/.config/mr/config.d
 !/.config/mr/config.d/git.vcsh
-!/.gitconfig
-!/.gitexcludes
 !/.gitignore.d
 !/.gitignore.d/git
+!/.config/git
+!/.config/git/*
