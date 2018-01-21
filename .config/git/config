@@ -2,6 +2,9 @@
     name = Aryel Mota Góis
     email = aryel.gois@gmail.com
 
+[github]
+    user = aryelgois
+
 [credential]
     helper = cache --timeout=3600
 
