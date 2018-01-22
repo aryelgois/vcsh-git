@@ -38,6 +38,8 @@
     # alias
     amend = commit --amend
     staged = diff --staged
+    rdiff = "!f() { git diff --color-words="${1:-.}"; }; f"
+    wdiff = diff --color-words
 
     # used to bootstrap the initial commit, as I usually work on develop and release on master
     big-bang = !git add . && git commit -m \"Initial commit\" && git checkout -b develop
