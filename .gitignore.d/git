@@ -9,3 +9,5 @@
 !/.gitignore.d/git
 !/.config/git
 !/.config/git/*
+!/bin
+!/bin/,github-create

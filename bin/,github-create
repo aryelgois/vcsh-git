@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Create a new GitHub repository
+#
+# then, if in a local repository, add the new remote and push
+#
+# Optional arguments:
+#   $1 Repository name
+#   $2 Description
+
+set -e
+
+# Initial vars
+GITHUBUSER="$(git config github.user || true)"
+CURRENTDIR="${PWD##*/}"; CURRENTDIR="${CURRENTDIR%.git}"
+REPONAME="$1"
+DESCRIPTION="$2"
+
+# helper function
+colored () {
+    echo $'\033['"${2:-1}m$1"$'\033[0m'
+}
+
+# Get user input
+read -p "Username [$(colored "$GITHUBUSER" 33)]: " USERNAME
+[[ -z $REPONAME ]] && read -p "Repository [$(colored "$CURRENTDIR" 33)]: " REPONAME
+[[ -z $DESCRIPTION ]] && read -p "Description (one line): " DESCRIPTION
+read -p "Private [$(colored 'y/N' 33)]? " PRIVATE_ANSWER
+
+case "$PRIVATE_ANSWER" in
+y|Y|yes)
+    PRIVATE=true
+    ;;
+*)
+    PRIVATE=false
+    ;;
+esac
+
+USERNAME="${USERNAME:-$GITHUBUSER}"
+REPONAME="${REPONAME:-$CURRENTDIR}"
+
+# Validate input
+if [[ -z $USERNAME ]]; then
+    >&2 colored 'E: empty Username' '97;41'
+    exit 1
+fi
+
+DESCRIPTION=${DESCRIPTION//\\/\\\\}
+DESCRIPTION=${DESCRIPTION//\"/\\\"}
+
+# Create JSON
+JSON="{
+    \"name\": \"$REPONAME\",
+    \"description\": \"${DESCRIPTION}\",
+    \"private\": $PRIVATE
+}"
+
+# Confirm
+echo
+echo "$JSON"
+echo
+read -p "Do you confirm the new repository for $(colored "$USERNAME") [$(colored 'Y/n' 33)]? " OK
+
+case "$OK" in
+y|Y|yes|'')
+    ;;
+*)
+    >&2 colored 'Command aborted' '97;41'
+    exit 1
+    ;;
+esac
+
+# Curl to the GitHub API
+curl -u "$USERNAME" https://api.github.com/user/repos -d "$JSON"
+
+# Is inside local repository?
+if git rev-parse --is-inside-work-tree > /dev/null 2>&1; then
+    # Set the freshly created repo to the origin
+    git remote add origin "https://github.com/$USERNAME/$REPONAME.git"
+
+    # Current branch (if is not in 'deatached HEAD')
+    BRANCH="$(git rev-parse --abbrev-ref HEAD)"
+    if [[ $BRANCH != 'HEAD' ]]; then
+        echo "Pushing branch $BRANCH..."
+        # push and set tracking information
+        git push -u origin "$BRANCH"
+    fi
+fi
