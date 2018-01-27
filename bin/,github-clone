@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# Clone a GitHub repository
+#   $1 Repository name (your) or full repository name (user/repository)
+#   $@ Aditional parameters tor git-clone(1)
+
+set -e
+
+REPOSITORY="$1"
+shift 1
+
+case "$REPOSITORY" in
+*/*)
+    ;;
+*)
+    USERNAME="$(git config github.user || true)"
+    if [[ -z $USERNAME ]]; then
+        cat <<EOF >&2
+E: Configure your GitHub user with:
+
+    git config --global github.user USERNAME
+EOF
+        exit 1
+    fi
+    REPOSITORY="$USERNAME/$REPOSITORY"
+    ;;
+esac
+
+exec git clone "https://github.com/$REPOSITORY.git" "$REPOSITORY" "$@"

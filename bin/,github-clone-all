@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Clone all public repositories for someone
+#   $1 Username (default is github.user in .gitconfig)
+#
+# NOTE:
+# - Forks are ignored
+
+if [[ -n $1 ]]; then
+    USERNAME="$1"
+else
+    USERNAME="$(git config github.user || true)"
+    if [[ -z $USERNAME ]]; then
+        cat <<EOF >&2
+E: Configure your GitHub user with:
+
+    git config --global github.user USERNAME
+EOF
+        exit 1
+    fi
+fi
+
+[[ -d $USERNAME ]] || mkdir -p "$USERNAME"
+cd "$USERNAME"
+
+curl -s "https://api.github.com/users/$USERNAME/repos" |
+    jq -r '.[] | select(.fork | not) | .name + " " + .clone_url' |
+        while read -r name url; do
+            [[ -d $name ]] || git clone "$url" "$name"
+        done

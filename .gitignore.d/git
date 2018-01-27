@@ -10,4 +10,6 @@
 !/.config/git
 !/.config/git/*
 !/bin
+!/bin/,github-clone
+!/bin/,github-clone-all
 !/bin/,github-create
