@@ -53,9 +53,6 @@
     ignored = !git status -s --ignored | grep '^!!' | cut -d ' ' -f 2-
 
     # utils
-    recommit = !GIT_COMMITTER_DATE="$(git log --pretty=format:'%ad' -1)" \
-                GIT_COMMITTER_NAME="$(git log --pretty=format:'%an' -1)" \
-                GIT_COMMITTER_EMAIL="$(git log --pretty=format:'%ae' -1)" git commit --amend
     reindex = !rm .git/index && git reset
     unstage = reset HEAD --
     abandon = !b="$(git symbolic-ref --short HEAD)" && [ "$b" != "master" ] && git checkout master && git branch -D "$b"

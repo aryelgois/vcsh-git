@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Does a `git commit --amend` keeping the committer data
+#   $1 Overrides committer date
+#   $2 Overrides committer name
+#   $3 Overrides committer email
+#
+# You can give an empty argument to skip it and change the next one
+
+GIT_COMMITTER_DATE="${1:-$(git log --pretty=format:'%ad' -1)}" \
+GIT_COMMITTER_NAME="${2:-$(git log --pretty=format:'%an' -1)}" \
+GIT_COMMITTER_EMAIL="${3:-$(git log --pretty=format:'%ae' -1)}" \
+git commit --amend
