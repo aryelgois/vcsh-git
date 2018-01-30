@@ -14,3 +14,4 @@
 !/bin/,github-clone-all
 !/bin/,github-create
 !/bin/git-recommit
+!/bin/git-replay

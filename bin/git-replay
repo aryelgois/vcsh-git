@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+# Replays a sequence of commits
+#   $@ revision range
+#
+# see also git-log(1), git-rev-list(1), git-cherry-pick(1)
+
+# has argument
+if [[ $# -eq 0 ]]; then
+    cat <<EOF >&2
+usage: $(basename "$0") <revision range>
+
+see git-log(1) and git-rev-list(1) for help
+EOF
+    exit 1
+fi
+
+# helper function
+colored () {
+    echo $'\033['"${2:-1}m$1"$'\033[0m'
+}
+
+# output is not a tty
+if [[ ! -t 1 ]]; then
+    >&2 colored 'E: you can not pipe this command' '97;41'
+    exit 1
+fi
+
+# input is not a tty
+if [[ ! -t 0 ]]; then
+    >&2 colored 'W: you should not pipe into this command' '97;41'
+    exit 1
+fi
+
+# helper function
+ask_confirm () {
+    local OK
+    read -p "$1 [$(colored Y/n 33)]? " OK < /dev/tty
+
+    case "$OK" in
+    y|Y|yes|'')
+        ;;
+    *)
+        >&2 colored 'Command aborted' '97;41'
+        exit 1
+        ;;
+    esac
+}
+
+# confirm commits to replay
+echo History to replay:
+echo
+git -c color.ui=always log "$@" --date-order --decorate --graph --oneline | cat
+echo
+ask_confirm 'Do you confirm the replay'
+
+# replay history
+PREVIOUS=
+git rev-list "$@" --reverse | while read COMMIT; do
+    echo
+    SUBJECT="$(git log --format=%s -1)"
+    PARENTS=($(git show --no-patch --format='%P' $COMMIT))
+    if [[ ${#PARENTS[@]} -gt 1 ]]; then
+        TO_MERGE=()
+        for PARENT in "${PARENTS[@]}"; do
+            [[ $PARENT == $PREVIOUS ]] || TO_MERGE=("${TO_MERGE[@]}" $PARENT)
+        done
+        echo "$(colored 'Re-merge') $(colored ${COMMIT:0:7} 33) $SUBJECT"
+        echo
+        git merge "${TO_MERGE[@]}" -m "$(git log --format=%B -n 1 $COMMIT)" || \
+            ask_confirm 'Continue'
+    else
+        echo "$(colored 'Cherry Pick') $(colored ${COMMIT:0:7} 33) $SUBJECT"
+        echo
+        git cherry-pick $COMMIT || ask_confirm 'Continue'
+    fi
+    echo
+
+    CD="$(git log --pretty=format:'%ad' $COMMIT -1)"; AD="$CD"
+    CN="$(git log --pretty=format:'%an' $COMMIT -1)"; AN="$CN"
+    CE="$(git log --pretty=format:'%ae' $COMMIT -1)"; AE="$CE"
+
+    GIT_COMMITTER_DATE="$CD" \
+    GIT_COMMITTER_NAME="$CN" \
+    GIT_COMMITTER_EMAIL="$CE" \
+    git commit --amend --author="$AN <$AE>" --date="$AD" < /dev/tty
+
+    PREVIOUS=$COMMIT
+done
