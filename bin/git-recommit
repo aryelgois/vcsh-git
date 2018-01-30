@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Does a `git commit --amend` keeping the committer data
+# Does a `git commit --amend` setting the committer info to the author's
 #   $1 Overrides committer date
 #   $2 Overrides committer name
 #   $3 Overrides committer email
