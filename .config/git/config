@@ -58,3 +58,7 @@
     abandon = !b="$(git symbolic-ref --short HEAD)" && [ "$b" != "master" ] && git checkout master && git branch -D "$b"
     score = diff --shortstat
     score-vs-master = !git diff --shortstat $(git merge-base HEAD origin/master) -- .
+
+[filter "gitignore_line"]
+    clean = gitignore_line
+    smudge = cat
