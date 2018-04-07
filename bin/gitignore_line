@@ -1,0 +1,42 @@
+#!/usr/bin/env php
+<?php
+/**
+ * Git filter to ignore lines in your files
+ *
+ * SETUP:
+ *
+ * git config --global filter.gitignore_line.clean  /path/to/gitignore_line.php
+ * git config --global filter.gitignore_line.smudge cat
+ *
+ * USAGE:
+ *
+ * 1. Add `[some file matching pattern] filter=gitignore_line` in .gitattributes
+ *
+ * 2. Mark single lines you want to ignore with 'GITIGNORE'
+ *    - case-sensitive
+ *    - ignores the whole line
+ *    - recommended to be in a comment for your code
+ *
+ * 3. Mark multiple lines between 'GITIGNORE START' and 'GITIGNORE END'
+ *    - can not be nested, matches first occurrences
+ *    - case-sensitive
+ *    - ignores all lines between the marker lines, inclusive
+ *    - recommended to be in comments for your code
+ *
+ * NOTE:
+ * - Ignored lines will be lost on checkout
+ * - Remember to chmod +x gitignore_line.php
+ *
+ * @todo Figure out a way to stash the lines ignored by this filter before
+ *       a git checkout
+ *
+ * @author Aryel Mota Góis
+ * @license MIT
+ */
+
+// remove multiline and inline gitignore from stdin
+echo preg_replace(
+    '/[^\n]*?(GITIGNORE START.*?GITIGNORE END|GITIGNORE)[^\n]*\n/s',
+    '',
+    stream_get_contents(fopen('php://stdin', 'r'))
+);
