@@ -15,6 +15,7 @@
 !/bin/,github-clone
 !/bin/,github-clone-all
 !/bin/,github-create
+!/bin/,github-repos
 !/bin/git-colored
 !/bin/git-recommit
 !/bin/git-replay

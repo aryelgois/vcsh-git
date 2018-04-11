@@ -1,0 +1,93 @@
+#!/usr/bin/env bash
+# Generates a mr(1) list of public repositories for a GitHub user
+#
+# The output is written in a .mrconfig file inside ~/git/
+
+set -e
+
+help () {
+    cat <<EOF
+Generates a mr(1) list of public repositories for a GitHub user
+
+The output is written in a .mrconfig file inside ~/git/
+
+Usage:
+
+    $(basename "$0") [USERNAME] [-f|-F] [-n FILENAME|-s]
+    $(basename "$0") [-h|--help]
+
+Options:
+
+    USERNAME    GitHub user (default: github.user in ~/.gitconfig)
+    -f          Include forks
+    -F          Only forks
+    -h|--help   Outputs this message and exit
+    -n FILENAME For the output file (it still receives a .myrepos extension)
+    -s          Output to STDOUT instead of a file
+EOF
+}
+
+POSITIONAL=()
+FILENAME=
+FORK_FILTER='select(.fork | not)'
+TO_STDOUT=
+
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+    -f)
+        FORK_FILTER=
+        shift
+        ;;
+    -F)
+        FORK_FILTER='select(.fork)'
+        shift
+        ;;
+    -h|--help)
+        help
+        exit
+        ;;
+    -n)
+        FILENAME="$2"
+        shift 2
+        ;;
+    -s)
+        TO_STDOUT=true
+        shift
+        ;;
+    *)
+        # save in an array for later
+        POSITIONAL+=("$1")
+        shift
+        ;;
+    esac
+done
+
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+if [[ -n $1 ]]; then
+    USERNAME="$1"
+else
+    USERNAME="$(git config github.user || true)"
+    if [[ -z $USERNAME ]]; then
+        cat <<EOF >&2
+E: Configure your GitHub user with:
+
+    git config --global github.user USERNAME
+EOF
+        exit 1
+    fi
+fi
+
+if [[ ! $TO_STDOUT ]]; then
+    OUTPUT="$HOME/git/$FILENAME.mrconfig"
+    mkdir -p "$(dirname $OUTPUT)"
+    exec 1>"$OUTPUT"
+fi
+
+curl -s "https://api.github.com/users/$USERNAME/repos?per_page=100" |
+    jq -r 'map(
+            '"${FORK_FILTER:+$FORK_FILTER |}"'
+            select(.name | startswith("vcsh-") | not) |
+            "[" + .name + "]\ncheckout = git clone " + .clone_url
+        ) | join("\n\n")'
