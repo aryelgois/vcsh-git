@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# A complete commit log tree for git
+#
+# USAGE: git log-fullest [mono] [GIT_ARGUMENTS] [-- PAGER_ARGUMENTS]
+#
+# OPTIONS:
+#   mono            Disables colors
+#   GIT_ARGUMENTS   Passed to git-lg
+#   PAGER_ARGUMENTS Passed to the pager. Must be preceded by --
+#
+# See git-lg in https://github.com/aryelgois/vcsh-git
+# See git-colored in https://gist.github.com/aryelgois/c413ca5bf7bb9341c3c9181d492217d6
+
+COLORED=colored
+FOUND_DELIMITER=
+GIT_ARGUMENTS=()
+PAGER_ARGUMENTS=()
+
+[[ $1 == 'mono' ]] && COLORED= && shift
+
+while [[ $# -gt 0 ]]; do
+    if [[ -z $FOUND_DELIMITER ]]; then
+        if [[ $1 == '--' ]]; then
+            FOUND_DELIMITER=true
+        else
+            GIT_ARGUMENTS+=("$1")
+        fi
+    else
+        PAGER_ARGUMENTS+=("$1")
+    fi
+    shift
+done
+
+(
+    git $COLORED log --format=fuller -1
+    echo
+    git $COLORED lg "${GIT_ARGUMENTS[@]}"
+) | ${PAGER:-less} "${PAGER_ARGUMENTS[@]}"

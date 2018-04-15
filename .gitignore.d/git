@@ -16,6 +16,7 @@
 !/bin/,github-create
 !/bin/,github-repos
 !/bin/git-colored
+!/bin/git-log-fullest
 !/bin/git-recommit
 !/bin/git-replay
 !/bin/git-watch
