@@ -19,5 +19,5 @@
 !/bin/git-log-fullest
 !/bin/git-recommit
 !/bin/git-replay
-!/bin/git-watch
+!/bin/git-watchless
 !/bin/gitignore_line

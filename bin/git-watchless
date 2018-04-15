@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Watch your commit history in the terminal
+#
+# The log is scrollable, and to update you have to press 'q'
+# To exit, keep pressing 'q'
+#
+# See git-log-fullest in https://gist.github.com/aryelgois/bcba085572e2786a579d82354ad540f6
+
+while :; do git log-fullest && read -N 1 -t 0.04 EXIT && break; done
