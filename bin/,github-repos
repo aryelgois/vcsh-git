@@ -8,16 +8,15 @@ set -e
 VERSION=0.1
 
 help () {
+    PROGRAM="$(basename "$0")"
     cat <<EOF
 Generates a mr(1) list of public repositories for a GitHub user
 
 The output is written in a .mrconfig file inside ~/git/
 
-Usage:
-
-    $(basename "$0") [USERNAME] [-f|-F] [-n FILENAME|-s]
-    $(basename "$0") [-h|--help]
-    $(basename "$0") [-v|--version]
+Usage: $PROGRAM [USERNAME] [-f|-F] [-n FILENAME|-s]
+  or:  $PROGRAM -h|--help
+  or:  $PROGRAM -v|--version
 
 Options:
 
