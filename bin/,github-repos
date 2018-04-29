@@ -5,6 +5,8 @@
 
 set -e
 
+VERSION=0.1
+
 help () {
     cat <<EOF
 Generates a mr(1) list of public repositories for a GitHub user
@@ -15,6 +17,7 @@ Usage:
 
     $(basename "$0") [USERNAME] [-f|-F] [-n FILENAME|-s]
     $(basename "$0") [-h|--help]
+    $(basename "$0") [-v|--version]
 
 Options:
 
@@ -24,6 +27,18 @@ Options:
     -h|--help   Outputs this message and exit
     -n FILENAME For the output file (it still receives a .myrepos extension)
     -s          Output to STDOUT instead of a file
+    -v|--version Outputs the version, copyright and license, then exits
+EOF
+}
+
+version () {
+    cat <<EOF
+GitHub Repos $VERSION
+
+Copyright (C) 2018 Aryel Mota Góis
+License MIT: MIT License <https://opensource.org/licenses/MIT>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
 EOF
 }
 
@@ -54,6 +69,10 @@ while [[ $# -gt 0 ]]; do
     -s)
         TO_STDOUT=true
         shift
+        ;;
+    -v|--version)
+        version
+        exit
         ;;
     *)
         # save in an array for later
