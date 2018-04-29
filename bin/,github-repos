@@ -19,14 +19,13 @@ Usage: $PROGRAM [USERNAME] [-f|-F] [-n FILENAME|-s]
   or:  $PROGRAM -v|--version
 
 Options:
-
-    USERNAME    GitHub user (default: github.user in ~/.gitconfig)
-    -f          Include forks
-    -F          Only forks
-    -h|--help   Outputs this message and exit
-    -n FILENAME For the output file (it still receives a .myrepos extension)
-    -s          Output to STDOUT instead of a file
-    -v|--version Outputs the version, copyright and license, then exits
+  USERNAME       GitHub user (default: github.user in .gitconfig)
+  -f             Include forks
+  -F             Only output forks
+  -h, --help     Output this message and exit
+  -n FILENAME    For the output file (it still receives a .myrepos extension)
+  -s             Output to STDOUT instead of a file
+  -v, --version  Output the version, copyright and license, then exit
 EOF
 }
 
