@@ -2,6 +2,9 @@
 # Generates a mr(1) list of public repositories for a GitHub user
 #
 # The output is written in a .mrconfig file inside ~/git/
+#
+# make manual:
+#     help2man -L en_US --no-info ,github-repos
 
 set -e
 
