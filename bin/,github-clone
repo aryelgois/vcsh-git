@@ -2,6 +2,12 @@
 # Clone a GitHub repository
 #   $1 Repository name (your) or full repository name (user/repository)
 #   $@ Aditional parameters tor git-clone(1)
+#
+# The cloned repository is located in one of the following directories:
+#   $HOME/git - if $1 is a simple name
+#   /git      - if $1 is a full repository name
+#
+# Note that /git must exist, and you need write permissions
 
 set -e
 
@@ -15,8 +21,17 @@ shift 1
 
 case "$REPOSITORY" in
 */*)
+    PREFIX="/git"
+    if [[ ! -d $PREFIX ]]; then
+        >&2 echo E: Directory '/git' does not exist
+        exit 1
+    fi
+
+    REMOTE="$REPOSITORY"
     ;;
 *)
+    PREFIX="$HOME/git"
+
     USERNAME="$(git config github.user || true)"
     if [[ -z $USERNAME ]]; then
         cat <<EOF >&2
@@ -26,8 +41,9 @@ E: Configure your GitHub user with:
 EOF
         exit 1
     fi
-    REPOSITORY="$USERNAME/$REPOSITORY"
+
+    REMOTE="$USERNAME/$REPOSITORY"
     ;;
 esac
 
-exec git clone "https://github.com/$REPOSITORY.git" "$REPOSITORY" "$@"
+exec git clone "https://github.com/$REMOTE.git" "$PREFIX/$REPOSITORY" "$@"
